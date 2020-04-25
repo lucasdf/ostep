@@ -1,4 +1,4 @@
-#include "./linked-list.c"
+#include "./cp29_linked-list.c"
 #define BUCKETS (101)
 
 typedef struct __hash_t {

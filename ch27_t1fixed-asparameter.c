@@ -1,8 +1,8 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <pthread.h>
-#include "../include/common.h"
-#include "../include/common_threads.h"
+#include "common.h"
+#include "common_threads.h"
 #include <stdlib.h>
 
 static volatile int counter = 0;

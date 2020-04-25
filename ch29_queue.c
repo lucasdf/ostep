@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <stdlib.h>
+#include <assert.h>
 
 typedef struct __node_t {
   int value;
@@ -47,3 +48,5 @@ int Queue_Dequeue(queue_t *q, int *value) {
   free(tmp);
   return 0;
 }
+
+int main(){}
