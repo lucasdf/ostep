@@ -26,19 +26,15 @@ char *philosopher_name(enum Philosophers philosopher) {
   }
 }
 
-enum ForkStatus { ForkTaken, ForkAvailable };
 typedef struct __fork_ {
   pthread_mutex_t lock;
-  enum ForkStatus status;
 } fork;
 
 fork forks[N_FORKS];
 pthread_mutex_t lock;
-/*pthread_cond_t  forks[N_FORKS];*/
 
 void initialize_forks() {
   for (int i = 0; i < N_FORKS; i++) {
-    forks[i].status = ForkAvailable;
     pthread_mutex_init(&forks[i].lock, NULL);
   }
 }
