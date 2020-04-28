@@ -2,6 +2,7 @@
 #include <pthread.h>
 #include <stdio.h>
 
+#define N_ROUNDS 10
 #define N_FORKS 5
 #define N_PHILOSOPHERS 5
 enum Philosophers {
@@ -29,9 +30,7 @@ char *philosopher_name(enum Philosophers philosopher) {
 typedef struct __fork_ {
   pthread_mutex_t lock;
 } fork;
-
 fork forks[N_FORKS];
-pthread_mutex_t lock;
 
 void initialize_forks() {
   for (int i = 0; i < N_FORKS; i++) {
@@ -48,10 +47,9 @@ void initialize_forks() {
 void *eat(void *arg) {
   int *philosopher = (int *)arg;
   char *name = philosopher_name((enum Philosophers) * philosopher);
-  for (int rounds = 0; rounds < 3; rounds++) {
+  for (int rounds = 0; rounds < N_ROUNDS; rounds++) {
     int left_fork = *philosopher;
-    // fork to the right of Epicurus is number 0, not number 5
-    int right_fork = *philosopher == N_PHILOSOPHERS - 1 ? 0 : *philosopher + 1;
+    int right_fork = (*philosopher + 1) % N_PHILOSOPHERS;
 
     pthread_mutex_lock(&forks[left_fork].lock);
     printf("%s has taken the left fork number %d\n", name, left_fork);
@@ -70,6 +68,9 @@ void *eat(void *arg) {
     printf("%s released the left fork number %d\n", name, left_fork);
     pthread_mutex_unlock(&forks[right_fork].lock);
     printf("%s has released the right fork number %d\n", name, right_fork);
+
+    // Sleeps a second after eating
+    Spin(1);
   }
   return NULL;
 }
@@ -83,19 +84,12 @@ void wait_for_threads(pthread_t threads[]) {
 
 int main(int argc, char *argv[]) {
   initialize_forks();
-  pthread_t plato, aristotle, socrates, nietzsche, epicurus;
-  int plato_number = 0;
-  pthread_create(&plato, NULL, eat, &plato_number);
-  int aristotle_number = 1;
-  pthread_create(&aristotle, NULL, eat, &aristotle_number);
-  int socrates_number = 2;
-  pthread_create(&socrates, NULL, eat, &socrates_number);
-  int nietzsche_number = 3;
-  pthread_create(&nietzsche, NULL, eat, &nietzsche_number);
-  int epicurus_number = 4;
-  pthread_create(&epicurus, NULL, eat, &epicurus_number);
-
-  pthread_t thread_pool[] = {plato, aristotle, socrates, nietzsche, epicurus};
+  pthread_t thread_pool[N_PHILOSOPHERS];
+  int philosophers[N_PHILOSOPHERS];
+  for (int i = 0; i < N_PHILOSOPHERS; i++) {
+    philosophers[i] = i;
+    pthread_create(&thread_pool[i], NULL, eat, &philosophers[i]);
+  }
   wait_for_threads(thread_pool);
   printf("All philosopher have eaten the food. Dinner is over!\n");
 }
