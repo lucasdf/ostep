@@ -49,7 +49,7 @@ void *eat(void *arg) {
   char *name = philosopher_name((enum Philosophers) * philosopher);
   for (int rounds = 0; rounds < N_ROUNDS; rounds++) {
     int left_fork = *philosopher;
-    int right_fork = *philosopher + 1 % N_PHILOSOPHERS;
+    int right_fork = (*philosopher + 1) % N_PHILOSOPHERS;
 
     // Solves deadlock by changing how last philosopher takes forks
     if (*philosopher == Epicurus) {

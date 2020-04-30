@@ -27,10 +27,12 @@ int List_Insert(list_t *L, int key) {
   }
   new->key = key;
 
-  pthread_mutex_lock(&L->lock);
-  new->next = L->head;
-  L->head = new;
-  pthread_mutex_unlock(&L->lock);
+  do {
+    new->next = L->head;
+    // changes '&L->head' from old 'new->next' to new 'new'
+    // if it fails (ie. head has been updated and it is not new->next),
+    // then updates new->next with the new head and try again
+  } while (__sync_bool_compare_and_swap(&L->head, new->next, new) == 0);
   return 0;
 }
 
