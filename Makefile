@@ -6,7 +6,7 @@ CC = gcc
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 all:
-	rm ./compile_commands.json && bear make _all
+	rm -f ./compile_commands.json && bear make _all
 _all: $(OBJS)
 
 clean:
